@@ -1,4 +1,4 @@
-﻿using Duckov.UI;
+using Duckov.UI;
 using Duckov.UI.Animations;
 using Duckov.Utilities;
 using FMOD;
@@ -20,28 +20,14 @@ namespace ItemLevelAndSearchSoundMod
         public const string Medium = "UI/sceneloader_click";
         public const string High = "UI/game_start";
 
-        /// <summary>
-        /// 原本的搜索动画参数
-        /// </summary>
         public static float DefaultSearchAnimationValue;
-        /// <summary>
-        /// 关闭自定义搜索时长
-        /// </summary>
         public static bool DisableModSearchTime;
 
-        /// <summary>
-        /// 背景色正常显示，但是搜索时间和音效强制按白色稀有度计算的物品Id列表
-        /// </summary>
-        public static readonly int[] ForceWhiteLevelTypeID = new int[]{ 
-            308, // 冷核碎片
-            309, // 赤核碎片
-            368, // 虚化的羽毛
-            394, // 计算核心
-            890  // 狗牌
-        };
+        public static readonly int[] ForceWhiteLevelTypeID = new int[] { 308, 309, 368, 394, 890 };
 
         public static Dictionary<ItemValueLevel, Sound> ItemValueLevelSound = new Dictionary<ItemValueLevel, Sound>();
         public static string ErrorMessage = "";
+
         public static ChannelGroup SfxGroup
         {
             get
@@ -50,29 +36,16 @@ namespace ItemLevelAndSearchSoundMod
                 {
                     RESULT result = FMODUnity.RuntimeManager.GetBus("bus:/Master/SFX").getChannelGroup(out sfxGroup);
                     if (result != RESULT.OK)
-                    {
                         UnityEngine.Debug.LogError("ItemLevelAndSearchSoundMod FMOD failed to get sfx group: " + result);
-                    }
                 }
                 return sfxGroup;
             }
         }
 
-        public static Color White;
-        public static Color Green;
-        public static Color Blue;
-        public static Color Purple;
-        public static Color Orange;
-        public static Color LightRed;
-        public static Color Red;
-        /// <summary>
-        /// 搜索中播放的音效
-        /// </summary>
+        public static Color White, Green, Blue, Purple, Orange, LightRed, Red;
         private static Sound searchingSound;
         private static ChannelGroup sfxGroup;
-
         private Harmony harmony;
-
         private Channel searchingChannel;
 
         private void OnEnable()
@@ -86,55 +59,11 @@ namespace ItemLevelAndSearchSoundMod
             {
                 var revolver = magnifier.GetComponent<Revolver>();
                 if (revolver != null)
-                {
                     DefaultSearchAnimationValue = revolver.rPM;
-                }
             }
 
-            try
-            {
-                string searchingSoundPath = "ItemLevelAndSearchSoundMod/Searching.mp3";
-                if (File.Exists(searchingSoundPath))
-                {
-                    var soundResult = FMODUnity.RuntimeManager.CoreSystem.createSound(searchingSoundPath, MODE.LOOP_NORMAL, out searchingSound);
-                    if (soundResult != RESULT.OK)
-                    {
-                        ErrorMessage += "FMOD failed to create searching sound: " + soundResult + "\n";
-                    }
-                    else
-                    {
-                        UnityEngine.Debug.Log("ItemLevelAndSearchSoundMod Load Searching Sound Success");
-                    }
-                }
-
-                foreach (ItemValueLevel item in Enum.GetValues(typeof(ItemValueLevel)))
-                {
-                    string path = $"ItemLevelAndSearchSoundMod/{(int) item}.mp3";
-                    if (File.Exists(path))
-                    {
-                        var soundResult = FMODUnity.RuntimeManager.CoreSystem.createSound(path, MODE.LOOP_OFF, out Sound sound);
-                        if (soundResult != RESULT.OK)
-                        {
-                            ErrorMessage += "FMOD failed to create sound: " + soundResult + "\n";
-                            continue;
-                        }
-                        ItemValueLevelSound.Add(item, sound);
-                        UnityEngine.Debug.Log("ItemLevelAndSearchSoundMod Load Custom Sound Success: " + item);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                ErrorMessage += e.ToString() + "\n";
-            }
-
-            ColorUtility.TryParseHtmlString("#FFFFFF00", out White);
-            ColorUtility.TryParseHtmlString("#7cff7c40", out Green);
-            ColorUtility.TryParseHtmlString("#7cd5ff40", out Blue);
-            ColorUtility.TryParseHtmlString("#d0acff40", out Purple);
-            ColorUtility.TryParseHtmlString("#ffdc2496", out Orange);
-            ColorUtility.TryParseHtmlString("#ff585896", out LightRed);
-            ColorUtility.TryParseHtmlString("#bb000096", out Red);
+            LoadSounds();
+            LoadColors();
 
             ItemUtilities.OnItemSentToPlayerInventory += OnItemSentToPlayerInventory;
             InteractableLootbox.OnStartLoot += OnStartLoot;
@@ -144,21 +73,102 @@ namespace ItemLevelAndSearchSoundMod
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
+        private void LoadSounds()
+        {
+            try
+            {
+                string searchingSoundPath = "ItemLevelAndSearchSoundMod/Searching.mp3";
+                if (File.Exists(searchingSoundPath))
+                {
+                    var soundResult = FMODUnity.RuntimeManager.CoreSystem.createSound(searchingSoundPath, MODE.LOOP_NORMAL, out searchingSound);
+                    if (soundResult != RESULT.OK)
+                        ErrorMessage += "FMOD failed to create searching sound: " + soundResult + "\n";
+                }
+
+                foreach (ItemValueLevel item in Enum.GetValues(typeof(ItemValueLevel)))
+                {
+                    string path = $"ItemLevelAndSearchSoundMod/{(int)item}.mp3";
+                    if (File.Exists(path))
+                    {
+                        var soundResult = FMODUnity.RuntimeManager.CoreSystem.createSound(path, MODE.LOOP_OFF, out Sound sound);
+                        if (soundResult != RESULT.OK)
+                        {
+                            ErrorMessage += "FMOD failed to create sound: " + soundResult + "\n";
+                            continue;
+                        }
+                        ItemValueLevelSound.Add(item, sound);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorMessage += e.ToString() + "\n";
+            }
+        }
+
+        private void LoadColors()
+        {
+            string configFile = "ItemLevelAndSearchSoundMod/ColorConfig.txt";
+
+            var defaults = new Dictionary<string, string>
+            {
+                {"White", "00000000"},
+                {"Green", "1A5A3EAA"},
+                {"Blue", "39537CCC"},
+                {"Purple", "3F3B75AA"},
+                {"Orange", "67523BCC"},
+                {"LightRed", "7C434ACC"},
+                {"Red", "8F2531CC"}
+            };
+
+            if (!File.Exists(configFile))
+            {
+                Directory.CreateDirectory("ItemLevelAndSearchSoundMod");
+                using (var writer = new StreamWriter(configFile))
+                {
+                    foreach (var kv in defaults)
+                        writer.WriteLine($"{kv.Key}={kv.Value}");
+                }
+            }
+
+            var lines = File.ReadAllLines(configFile);
+            foreach (var kv in defaults)
+            {
+                string value = kv.Value;
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith(kv.Key + "=", StringComparison.OrdinalIgnoreCase))
+                    {
+                        value = line.Split('=')[1];
+                        break;
+                    }
+                }
+                if (ColorUtility.TryParseHtmlString("#" + value, out Color c))
+                {
+                    switch (kv.Key)
+                    {
+                        case "White": White = c; break;
+                        case "Green": Green = c; break;
+                        case "Blue": Blue = c; break;
+                        case "Purple": Purple = c; break;
+                        case "Orange": Orange = c; break;
+                        case "LightRed": LightRed = c; break;
+                        case "Red": Red = c; break;
+                    }
+                }
+            }
+        }
+
         private void OnStartLoot(InteractableLootbox lootbox)
         {
             if (!lootbox.Inventory.NeedInspection || lootbox.Inventory.Content.All(item => item == null || item.Inspected))
-            {
                 return;
-            }
-            if (!searchingSound.hasHandle())
-            {
-                return;
-            }
+
+            if (!searchingSound.hasHandle()) return;
+
             RESULT result = FMODUnity.RuntimeManager.CoreSystem.playSound(searchingSound, SfxGroup, false, out searchingChannel);
             if (result != RESULT.OK)
-            {
                 ErrorMessage += "FMOD failed to play searching sound: " + result + "\n";
-            }
         }
 
         private void OnStopLoot(InteractableLootbox lootbox)
@@ -179,9 +189,9 @@ namespace ItemLevelAndSearchSoundMod
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
-                var errorStyle = new GUIStyle(GUI.skin.label);
-                errorStyle.normal.textColor = Color.red;
-                GUI.Label(new Rect(10, 10, Screen.width - 10, Screen.height - 10), "ItemLevelAndSearchSoundMod Error: \n" + ErrorMessage, errorStyle);
+                var style = new GUIStyle(GUI.skin.label);
+                style.normal.textColor = Color.red;
+                GUI.Label(new Rect(10, 10, Screen.width - 10, Screen.height - 10), "ItemLevelAndSearchSoundMod Error: \n" + ErrorMessage, style);
             }
         }
 
@@ -194,16 +204,12 @@ namespace ItemLevelAndSearchSoundMod
             harmony.UnpatchAll(Id);
 
             if (searchingSound.hasHandle())
-            {
                 searchingSound.release();
-            }
 
             foreach (var sound in ItemValueLevelSound)
-            {
                 sound.Value.release();
-            }
+
             ItemValueLevelSound.Clear();
         }
     }
 }
-

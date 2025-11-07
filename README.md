@@ -1,45 +1,25 @@
-# [逃离鸭科夫Mod] 物品价值稀有度与搜索音效
 
-[English ReadMe](./README_en.md)
+# ItemLevelAndSearchSoundMod — Custom Version
 
-**创意工坊地址**:  
-https://steamcommunity.com/sharedfiles/filedetails/?id=3588386576
+这是对原作者 [dzj0821/ItemLevelAndSearchSoundMod](https://github.com/dzj0821/ItemLevelAndSearchSoundMod) 的优化版本，添加了一些自定义功能。
 
-## 简介
+## 新增功能
 
-来点紧张刺激的摸宝！
-根据物品价值增加了稀有度，并重新设定了搜索时长，增加了搜索音效。
+1. **自动生成文件夹**
 
-现在支持自定义搜索音效，设置方式：
-1. 在游戏安装目录新建 ItemLevelAndSearchSoundMod 文件夹
-2. 放入文件 0.mp3（代表替换白色稀有度的物品搜索音效，1=绿色，2=蓝色，3=紫色，4=金色，5=淡红色。6=深红色）
-3. 重新打开游戏（如果在运行的话）
+   * 启动 Mod 时会自动生成 `ItemLevelAndSearchSoundMod` 文件夹
+   * 你可以将自定义音频文件放入该文件夹，Mod 会自动加载
 
-如果加载自定义音效出现问题，错误信息会以红字显示在屏幕左上角。
+2. **可配置颜色**
 
-如果想要禁用MOD调整的搜索时长，创建 <游戏安装目录>/ItemLevelAndSearchSoundMod/DisableModSearchTime.txt 文件即可。
+   * 添加了 `ColorConfig.txt` 配置文件
+   * 支持自定义物品稀有度颜色，方便根据个人喜好调整界面显示
 
 ## 使用方法
+2. 将音频文件放入 `ItemLevelAndSearchSoundMod` 文件夹
+3. 修改 `ColorConfig.txt` 调整颜色
+4. 启动游戏，Mod 会自动加载自定义音频和颜色
 
-注意：游戏路径不能存在中文及特殊符号，否则功能可能不会生效。
+## 注意
 
-### Steam平台玩家
-
-1. 打开网页[创意工坊地址](https://steamcommunity.com/sharedfiles/filedetails/?id=3588386576)，订阅Mod
-2. 打开游戏，主菜单进入Mods界面，勾选Mod
-
-### 非Steam平台Windows玩家
-
-1. 打开网页[Release](https://github.com/dzj0821/ItemLevelAndSearchSoundMod/releases)，下载Mod压缩包
-2. 打开游戏安装目录，在Duckov_Data文件夹下创建Mods文件夹，将压缩包解压到Mods文件夹下，此时文件结构应为：Duckov_Data->Mods->ItemLevelAndSearchSoundMod->ItemLevelAndSearchSoundMod.dll
-3. 打开游戏，主菜单进入Mods界面，勾选Mod
-
-### 非Steam平台MacOS玩家
-
-**注意：尚不支持从AppStore下载的游戏**
-
-1. 打开网页[Release](https://github.com/dzj0821/ItemLevelAndSearchSoundMod/releases)，下载Mod压缩包
-2. 右键游戏包，选择显示包内容，在Contents文件夹下创建Mods文件夹，将压缩包解压到Mods文件夹下，此时文件结构应为：Duckov.app->Contents->Mods->ItemLevelAndSearchSoundMod->ItemLevelAndSearchSoundMod.dll
-3. 打开游戏，主菜单进入Mods界面，勾选Mod
-
-注意：由于部分其他Mod不兼容MacOS，启用这部分Mod会导致大部分Mod失效（即使有些兼容MacOS）。如果勾选这个Mod后功能不生效，麻烦尝试关闭所有其他Mod进行测试。
+* 该版本仅在原 Mod 基础上添加了自定义功能，不修改原有逻辑

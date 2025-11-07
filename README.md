@@ -16,9 +16,9 @@
    * 支持自定义物品稀有度颜色，方便根据个人喜好调整界面显示
 
 ## 使用方法
-2. 将音频文件放入 `ItemLevelAndSearchSoundMod` 文件夹
-3. 修改 `ColorConfig.txt` 调整颜色
-4. 启动游戏，Mod 会自动加载自定义音频和颜色
+ 将音频文件放入 `ItemLevelAndSearchSoundMod` 文件夹
+ 修改 `ColorConfig.txt` 调整颜色
+ 启动游戏，Mod 会自动加载自定义音频和颜色
 
 ## 注意
 
